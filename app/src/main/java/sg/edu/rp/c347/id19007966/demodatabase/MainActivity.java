@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,6 +16,9 @@ public class MainActivity extends AppCompatActivity {
 
     Button btnInsert, btnGetTasks;
     TextView tvResults;
+    ListView tasksListView;
+
+    ArrayList<Task> data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +37,21 @@ public class MainActivity extends AppCompatActivity {
 
         btnGetTasks = findViewById(R.id.btnGetTasks);
         tvResults = findViewById(R.id.tvResults);
+
+        tasksListView = findViewById(R.id.taskList);
+
+        data = new ArrayList<>();
+
+        ArrayAdapter<Task> adapter = new TaskAdapter(this, R.layout.row_layout, data);
+        tasksListView.setAdapter(adapter);
+
         btnGetTasks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DBHelper db = new DBHelper(MainActivity.this);
-                ArrayList<Task> data = db.getTaskContent();
+                data.clear();
+                // direct assigning will cause the adapter to reference the wrong instance.
+                data.addAll(db.getTaskContent());
                 db.close();
                 String text = "";
                 for (int i = 0; i < data.size(); i++) {
@@ -44,7 +59,9 @@ public class MainActivity extends AppCompatActivity {
                     text += i + ". " + data.get(i).getDescription() + "\n";
                 }
                 tvResults.setText(text);
+                adapter.notifyDataSetChanged();
             }
         });
+
     }
 }

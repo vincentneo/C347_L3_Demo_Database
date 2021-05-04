@@ -26,4 +26,9 @@
         android:background="#03A9F4"
         android:text=" "
         android:textColor="#FFFFFF" />
+
+    <ListView
+        android:id="@+id/taskList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>
